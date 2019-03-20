@@ -38,15 +38,29 @@
                 商品推荐
             </div>
             <div class="recommend-body">
-                <swiper>
-                    <swiper-slide>
+                <swiper :options="swiperOption">
+                    <swiper-slide v-for="(item,index) in recommendGoods" :key="index">
                         <div class="recommend-item">
-                            <img src="" width="80%" />
-                            <div></div>
-                            <div></div>
+                            <img :src="item.image" width="80%" />
+                            <div>{{item.goodsName}}</div>
+                            <div>￥{{item.price | moneyFilter}}(￥{{item.mallPrice | moneyFilter}})</div>
                         </div>
                     </swiper-slide>
                 </swiper>
+            </div>
+        </div>
+        <!-- <swiperDefault></swiperDefault>
+        <swiperDefault2></swiperDefault2>
+        <swiperDefault3></swiperDefault3>
+        <swiperText></swiperText> -->
+        <floorComponent :floorData="floor1" :floorTitle="floorName.floor1"></floorComponent>
+        <floorComponent :floorData="floor2" :floorTitle="floorName.floor2"></floorComponent>
+        <floorComponent :floorData="floor3" :floorTitle="floorName.floor3"></floorComponent>
+        <!-- Hot Area -->
+        <div class="hot-area">
+            <div class="hot-title">热卖商品</div>
+            <div class="hot-goods">
+                <!-- 这里需要一个list组件 -->
             </div>
         </div>
     </div>
@@ -57,6 +71,12 @@
     import axios from 'axios'
     import 'swiper/dist/css/swiper.css'
     import { swiper, swiperSlide } from 'vue-awesome-swiper'
+    // import swiperDefault from '../swiper/swiperDefault'
+    // import swiperDefault2 from '../swiper/swiperDefault2'
+    // import swiperDefault3 from '../swiper/swiperDefault3'
+    // import swiperText from '../swiper/swiperText'
+    import floorComponent from '../component/floorComponent'
+    import { toMoney } from '@/filter/moneyFilter.js'
     export default {
         data() {
             return {
@@ -66,11 +86,29 @@
                 category:[],
                 adBanner:'',
                 recommendGoods:[],
+                swiperOption:{
+                    slidesPerView: 3,
+                },
+                floor1:[],
+                floor2:[],
+                floor3:[],
+                floorName:{},
             }
         },
         components:{
             swiper,
-            swiperSlide
+            swiperSlide,
+            // swiperDefault,
+            // swiperDefault2,
+            // swiperDefault3,
+            // swiperText,
+            floorComponent,
+        },
+        filters:{
+            // 格式化金钱
+            moneyFilter(money){
+                return toMoney(money);
+            }
         },
         created(){
             axios({
@@ -85,6 +123,11 @@
                     this.adBanner = result.advertesPicture.PICTURE_ADDRESS;
                     this.bannerPicArray = result.slides;
                     this.recommendGoods = result.recommend;
+                    this.floor1 = result.floor1;
+                    this.floor2 = result.floor2;
+                    this.floor3 = result.floor3;
+                    this.floorName = result.floorName;
+
                 }
             })
             .catch(error=>{
@@ -142,6 +185,21 @@
         font-size: 14px;
         padding:.2rem;
         color:#e5017d;
-
     }
+    .recommend-body{
+        border-bottom: 1px solid #eee;
+    }
+    .recommend-item{
+        width: 99%;
+        border-right: 1px solid #eee;
+        font-size: 12px;
+        text-align: center;
+    }
+    .hot-area{
+        text-align: center;
+        font-size:14px;
+        height: 1.8rem;
+        line-height:1.8rem;
+    }
+    
 </style>
