@@ -61,6 +61,13 @@
             <div class="hot-title">热卖商品</div>
             <div class="hot-goods">
                 <!-- 这里需要一个list组件 -->
+                <van-list>
+                    <van-row gutter="20">
+                        <van-col span="12" v-for="(item,index) in hotGoods" :key="index">
+                            <goods-info :goodsImage="item.image" :goodsName="item.name" :goodsPrice="item.price"></goods-info>
+                        </van-col> 
+                    </van-row>
+                </van-list>
             </div>
         </div>
     </div>
@@ -77,6 +84,8 @@
     // import swiperText from '../swiper/swiperText'
     import floorComponent from '../component/floorComponent'
     import { toMoney } from '@/filter/moneyFilter.js'
+    import goodsInfo from '../component/goodsInfoComponent'
+    import url from '@/serviceAPI.config.js'
     export default {
         data() {
             return {
@@ -93,6 +102,7 @@
                 floor2:[],
                 floor3:[],
                 floorName:{},
+                hotGoods:[], //热卖商品
             }
         },
         components:{
@@ -103,6 +113,7 @@
             // swiperDefault3,
             // swiperText,
             floorComponent,
+            goodsInfo,
         },
         filters:{
             // 格式化金钱
@@ -112,7 +123,7 @@
         },
         created(){
             axios({
-                url:'https://www.easy-mock.com/mock/5c8f8092aefa8c773573b5da/commerce/index',
+                url:url.getShappingMallInfo,
                 method:'get',
             })
             .then(res=>{
@@ -127,7 +138,7 @@
                     this.floor2 = result.floor2;
                     this.floor3 = result.floor3;
                     this.floorName = result.floorName;
-
+                    this.hotGoods = result.hotGoods;//热卖商品
                 }
             })
             .catch(error=>{
